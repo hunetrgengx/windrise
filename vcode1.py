@@ -30,6 +30,7 @@ while i<=2900:
             url=pt_url.findall(nbd)
             url_deal(url)
             print(i)
+            j=1
     except :   
         if j<6:
             print('i=',i,'出错',j,'次')    
@@ -65,7 +66,7 @@ while i<=len(mixinfo):
             j+=1
             time.sleep(3)   
         elif j>=6:
-            urlbug.append(i)
+            contentbug.append(i)
             i+=1
             j=1 
 
