@@ -2,9 +2,10 @@ import requests,re
 from bs4 import BeautifulSoup
 import time
 import pandas as pd 
-mixinfo=[]
 
+mixinfo=[]
 count = 0
+#定义函数,用于处理每页的url，得到文章相关的网址、标题、日期
 def url_deal(aurl):
     global mixinfo
     for i in range(len(aurl)):
@@ -12,9 +13,10 @@ def url_deal(aurl):
         getre = re.match(r'(.*?) class=list-recommend normal-recommend>\n<h3> <span>.*?index.html>(.*?)</a><a href=(.*?) onclick=void0 target=_blank title=(.*?)>.*?</a></span> </h3>\n<p class=list-text>.*?</p>\n<span class=list-details>(.*?)</span>\n</div>',aurl[i],re.S)
         deal  = [getre.group(2),getre.group(3),getre.group(4),getre.group(5)]
         mixinfo.append(deal)
-i=343
 
+#开始程序的主函数，定义urlbug用于记录没运行成功的页数、定义contentbug用于记录没跑成功的文章代码
 urlbug=[]
+contentbug=[]
 j=1
 while i<=2900:
     try:
@@ -26,7 +28,7 @@ while i<=2900:
             bf = BeautifulSoup(html,'lxml')
             texts = bf.find_all('div', class_ = 'list-recommend normal-recommend')
             bd=BeautifulSoup(str(texts),'lxml') 
-            nbd=str(bd).replace('<html><body><p>[</p>','').replace(r'[','').replace(r']','').replace('\'','').replace('\"','').replace('(','').replace(')','') #消除特殊符号
+            nbd=str(bd).replace('<html><body><p>[</p>','').replace(r'[','').replace(r']','').replace('\'','').replace('\"','').replace('(','').replace(')','') #消除某些特殊符号，这些符号在正则中会出问题
             pt_url=re.compile(r'div class=list-recommend normal-recommend>.*?</span>\n</div>',re.S) #正则匹配式，注意.*?非贪婪模式以及最后的re.S进行匹配
             url=pt_url.findall(nbd)
             url_deal(url)
@@ -42,10 +44,7 @@ while i<=2900:
             i+=1
             j=1 
 
-              
-    
 
-contentbug=[]
 j=1
 while i<=len(mixinfo):
     try:

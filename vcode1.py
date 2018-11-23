@@ -11,8 +11,7 @@ def url_deal(aurl):
         getre = re.match(r'(.*?) class=list-recommend normal-recommend>\n<h3> <span>.*?index.html>(.*?)</a><a href=(.*?) onclick=void0 target=_blank title=(.*?)>.*?</a></span> </h3>\n<p class=list-text>.*?</p>\n<span class=list-details>(.*?)</span>\n</div>',aurl[i],re.S)
         deal  = [getre.group(2),getre.group(3),getre.group(4),getre.group(5)]
         mixinfo.append(deal)
-i=343
-
+i=0
 urlbug=[]
 j=1
 while i<=2900:
@@ -40,10 +39,7 @@ while i<=2900:
             urlbug.append(i)
             i+=1
             j=1 
-
-              
-    
-
+  
 contentbug=[]
 j=1
 while i<=len(mixinfo):
