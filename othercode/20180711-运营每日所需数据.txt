@@ -1,0 +1,237 @@
+import xlwt,psycopg2
+ 
+ 
+##sheet1用户信息 
+conn = psycopg2.connect(database="userdata", user="qaread",
+                         password="swerbn!gsWQg23", host="52.69.40.154", port="25431")
+cursor = conn.cursor()
+cursor.execute("SELECT SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) a,COUNT (1) 注册量  FROM user_info WHERE del_flag = 0  and create_time > '2018-06-25 00:00:00'  group by SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) order by A ASC")
+ ## 获取SELECT返回的元组
+rows = cursor.fetchall()
+ 
+f = xlwt.Workbook() #创建工作簿
+sheet1 = f.add_sheet(u'用户信息',cell_overwrite_ok=True) #创建sheet
+sheet1.write(0,0,'日期')
+sheet1.write(0,1,'注册量')
+sheet1.write(0,2,'日期')
+sheet1.write(0,3,'用户认证')
+sheet1.write(0,4,'日期')
+sheet1.write(0,5,'绑卡人数')
+
+for i in range(len(rows)):
+         for j in range(len(rows[i])):
+              sheet1.write(i+1,j,rows[i][j])
+cursor.close()
+
+b=j
+cursor = conn.cursor()
+cursor.execute("SELECT SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) a,count(1) 审核通过量 FROM user_identity_info WHERE del_flag = 0  AND audit_state =1 and create_time > '2018-06-25 00:00:00'  group by SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) order by A ASC")
+ ## 获取SELECT返回的元组
+rows = cursor.fetchall()
+for i in range(len(rows)):
+         for j in range(b,len(rows[i])+b):
+              sheet1.write(i+1,j+b,rows[i][j-b])
+cursor.close()		
+b=j
+cursor = conn.cursor()
+cursor.execute("select SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) a,count(1) 绑卡人数 from user_account where account_no is not null and account_type='3'  and create_time > '2018-06-25 00:00:00'  group by SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) order by A ASC")
+ ## 获取SELECT返回的元组
+rows = cursor.fetchall()
+for i in range(len(rows)):
+         for j in range(b,len(rows[i])+b):
+              sheet1.write(i+1,j+b,rows[i][j-b])
+			  
+cursor.close()			  
+
+
+
+##sheet2资金净流入流出开始
+conn = psycopg2.connect(database="c2cdata", user="qaread",
+                         password="swerbn!gsWQg23", host="52.69.40.154", port="25431")
+cursor = conn.cursor()
+cursor.execute("select '净出金-法币提现' as 净出金 ,SUBSTR(to_char(updatetime,'YYYYMMDD'),1,8)  a,sum(amount) ,count(distinct uid) as 人数,count(oid) as 笔数 from order_sell where updatetime > '2018-06-25 08:00:00'  and  cus_released='t' or sys_released='t' group by SUBSTR(to_char(updatetime,'YYYYMMDD'),1,8) order by a asc")
+ ## 获取SELECT返回的元组
+rows = cursor.fetchall()
+ 
+
+sheet2 = f.add_sheet(u'法币充提币',cell_overwrite_ok=True) #创建sheet
+sheet2.write(0,0,'状态')
+sheet2.write(0,1,'日期')
+sheet2.write(0,2,'金额')
+sheet2.write(0,3,'人数')
+sheet2.write(0,4,'笔数')
+
+for i in range(len(rows)):
+         for j in range(len(rows[i])):
+              sheet2.write(i+1,j,rows[i][j])
+f.save('E:\\test\\'+'text.xls')#保存文件
+a=i
+ ## 关闭游标
+cursor.close()
+
+
+cursor = conn.cursor()
+cursor.execute("select '净入金-法币充值' as 净入金,SUBSTR(to_char(updatetime,'YYYYMMDD'),1,8)  a,sum(amount),count(distinct uid) as 人数,count(oid) as 笔数 from order_buy where buz_released='t' and  updatetime > '2018-06-25 08:00:00' group by a order by a asc")
+ ## 获取SELECT返回的元组
+rows2 = cursor.fetchall()
+
+for i in range(a,a+len(rows2)):
+         for j in range(len(rows2[i-a])):
+              sheet2.write(i+1,j,rows2[i-a][j])
+
+ ## 关闭游标
+cursor.close()
+
+
+
+##sheet3充币数据
+conn = psycopg2.connect(database="t2tservice", user="qaread",
+                         password="swerbn!gsWQg23", host="52.69.40.154", port="25430")
+cursor = conn.cursor()
+cursor.execute("SELECT cointype as 币种, to_char( create_time, 'yyyy-MM-dd' ) as 充币时间, COUNT ( ID ) AS 充币笔数, count(distinct uid), SUM ( amount ) AS 充币金额 FROM withdrawcharge_op T  WHERE T.op_type = 0  AND create_time >= '2018-06-25'  GROUP BY cointype, to_char( create_time, 'yyyy-MM-dd' )  ORDER BY to_char( create_time, 'yyyy-MM-dd' ),cointype")
+ ## 获取SELECT返回的元组
+rows = cursor.fetchall()
+ 
+
+sheet2 = f.add_sheet(u'充币数据',cell_overwrite_ok=True) #创建sheet
+sheet2.write(0,0,'币种')
+sheet2.write(0,1,'时间')
+sheet2.write(0,2,'充币笔数')
+sheet2.write(0,3,'充币人数')
+sheet2.write(0,4,'充币金额')
+
+for i in range(len(rows)):
+         for j in range(len(rows[i])):
+              sheet2.write(i+1,j,rows[i][j])
+
+ ## 关闭游标
+cursor.close()
+
+
+##sheet4提币数据
+conn = psycopg2.connect(database="t2tservice", user="qaread",
+                         password="swerbn!gsWQg23", host="52.69.40.154", port="25430")
+cursor = conn.cursor()
+cursor.execute("SELECT cointype as 币种, to_char( create_time, 'yyyy-MM-dd' ) as 提币时间, COUNT ( ID ) AS 提币笔数, COUNT ( distinct uid ) AS 人数, SUM ( amount ) AS 提币金额 FROM withdrawcharge_op T  WHERE T.op_type = 1 and del_flag='0'  and status='10' AND create_time >= '2018-06-25'  GROUP BY cointype, to_char( create_time, 'yyyy-MM-dd' )  ORDER BY to_char( create_time, 'yyyy-MM-dd' ),cointype")
+ ## 获取SELECT返回的元组
+rows = cursor.fetchall()
+ 
+
+sheet2 = f.add_sheet(u'提币数据',cell_overwrite_ok=True) #创建sheet
+sheet2.write(0,0,'币种')
+sheet2.write(0,1,'时间')
+sheet2.write(0,2,'提币笔数')
+sheet2.write(0,3,'提币人数')
+sheet2.write(0,4,'提币金额')
+
+for i in range(len(rows)):
+         for j in range(len(rows[i])):
+              sheet2.write(i+1,j,rows[i][j])
+
+ ## 关闭游标
+cursor.close()
+
+##sheet5币币交易明细数据
+##bz-usdt
+conn = psycopg2.connect(database="t2tservice", user="qaread",
+                         password="swerbn!gsWQg23", host="52.69.40.154", port="25430")
+cursor = conn.cursor()
+cursor.execute("select symbol,SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) a,sum(amount) 交易量  ,count(*) 交易笔数, count(DISTINCT uid) 交易人数 from match_result_BZ_usdt where direction = 0 and consign_id is not null and   create_time > '2018-06-25 08:00:00' and uid not in ('4e3ef361-a918-4ab7-8e80-9192994efdd3','3d762c98-cc54-4d5c-b55d-a17119b768d4') group by symbol,SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) order by A ASC")
+rows = cursor.fetchall()
+sheet2 = f.add_sheet(u'币币交易明细',cell_overwrite_ok=True) #创建sheet
+sheet2.write(0,0,'交易对')
+sheet2.write(0,1,'时间')
+sheet2.write(0,2,'交易量')
+sheet2.write(0,3,'交易笔数')
+sheet2.write(0,4,'交易人数')
+
+for i in range(len(rows)):
+         for j in range(len(rows[i])):
+              sheet2.write(i+1,j,rows[i][j])
+cursor.close()
+
+##bch_btc
+a=i
+conn = psycopg2.connect(database="t2tservice", user="qaread",
+                         password="swerbn!gsWQg23", host="52.69.40.154", port="25430")
+cursor = conn.cursor()
+cursor.execute("select symbol,SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) a,sum(amount) 交易量  ,count(*) 交易笔数, count(DISTINCT uid) 交易人数 from match_result_bch_btc where direction = 0 and consign_id is not null and   create_time > '2018-06-25 08:00:00' and uid not in ('4e3ef361-a918-4ab7-8e80-9192994efdd3','3d762c98-cc54-4d5c-b55d-a17119b768d4') group by symbol,SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) order by A ASC")
+rows = cursor.fetchall()
+for i in range(a+2,len(rows)+a+2):
+         for j in range(len(rows[i-a-2])):
+              sheet2.write(i+1,j,rows[i-a-2][j])
+cursor.close()
+
+##bch_usdt
+a=i
+conn = psycopg2.connect(database="t2tservice", user="qaread",
+                         password="swerbn!gsWQg23", host="52.69.40.154", port="25430")
+cursor = conn.cursor()
+cursor.execute("select symbol,SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) a,sum(amount) 交易量  ,count(*) 交易笔数, count(DISTINCT uid) 交易人数 from match_result_bch_usdt where direction = 0 and consign_id is not null and   create_time > '2018-06-25 08:00:00' and uid not in ('4e3ef361-a918-4ab7-8e80-9192994efdd3','3d762c98-cc54-4d5c-b55d-a17119b768d4') group by symbol,SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) order by A ASC")
+rows = cursor.fetchall()
+for i in range(a+2,len(rows)+a+2):
+         for j in range(len(rows[i-a-2])):
+              sheet2.write(i+1,j,rows[i-a-2][j])
+cursor.close()
+
+##btc_usdt
+a=i
+conn = psycopg2.connect(database="t2tservice", user="qaread",
+                         password="swerbn!gsWQg23", host="52.69.40.154", port="25430")
+cursor = conn.cursor()
+cursor.execute("select symbol,SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) a,sum(amount) 交易量  ,count(*) 交易笔数, count(DISTINCT uid) 交易人数 from match_result_btc_usdt where direction = 0 and consign_id is not null and   create_time > '2018-06-25 08:00:00' and uid not in ('4e3ef361-a918-4ab7-8e80-9192994efdd3','3d762c98-cc54-4d5c-b55d-a17119b768d4') group by symbol,SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) order by A ASC")
+rows = cursor.fetchall()
+for i in range(a+2,len(rows)+a+2):
+         for j in range(len(rows[i-a-2])):
+              sheet2.write(i+1,j,rows[i-a-2][j])
+cursor.close()
+
+##eth_btc
+a=i
+conn = psycopg2.connect(database="t2tservice", user="qaread",
+                         password="swerbn!gsWQg23", host="52.69.40.154", port="25430")
+cursor = conn.cursor()
+cursor.execute("select symbol,SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) a,sum(amount) 交易量  ,count(*) 交易笔数, count(DISTINCT uid) 交易人数 from match_result_eth_btc where direction = 0 and consign_id is not null and   create_time > '2018-06-25 08:00:00' and uid not in ('4e3ef361-a918-4ab7-8e80-9192994efdd3','3d762c98-cc54-4d5c-b55d-a17119b768d4') group by symbol,SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) order by A ASC")
+rows = cursor.fetchall()
+for i in range(a+2,len(rows)+a+2):
+         for j in range(len(rows[i-a-2])):
+              sheet2.write(i+1,j,rows[i-a-2][j])
+cursor.close()
+
+##eth_usdt
+a=i
+conn = psycopg2.connect(database="t2tservice", user="qaread",
+                         password="swerbn!gsWQg23", host="52.69.40.154", port="25430")
+cursor = conn.cursor()
+cursor.execute("select symbol,SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) a,sum(amount) 交易量  ,count(*) 交易笔数, count(DISTINCT uid) 交易人数 from match_result_eth_usdt where direction = 0 and consign_id is not null and   create_time > '2018-06-25 08:00:00' and uid not in ('4e3ef361-a918-4ab7-8e80-9192994efdd3','3d762c98-cc54-4d5c-b55d-a17119b768d4') group by symbol,SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) order by A ASC")
+rows = cursor.fetchall()
+for i in range(a+2,len(rows)+a+2):
+         for j in range(len(rows[i-a-2])):
+              sheet2.write(i+1,j,rows[i-a-2][j])
+cursor.close()
+
+##ltc_btc
+a=i
+conn = psycopg2.connect(database="t2tservice", user="qaread",
+                         password="swerbn!gsWQg23", host="52.69.40.154", port="25430")
+cursor = conn.cursor()
+cursor.execute("select symbol,SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) a,sum(amount) 交易量  ,count(*) 交易笔数, count(DISTINCT uid) 交易人数 from match_result_ltc_btc where direction = 0 and consign_id is not null and   create_time > '2018-06-25 08:00:00' and uid not in ('4e3ef361-a918-4ab7-8e80-9192994efdd3','3d762c98-cc54-4d5c-b55d-a17119b768d4') group by symbol,SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) order by A ASC")
+rows = cursor.fetchall()
+for i in range(a+2,len(rows)+a+2):
+         for j in range(len(rows[i-a-2])):
+              sheet2.write(i+1,j,rows[i-a-2][j])
+cursor.close()
+
+##ltc_usdt
+a=i
+conn = psycopg2.connect(database="t2tservice", user="qaread",
+                         password="swerbn!gsWQg23", host="52.69.40.154", port="25430")
+cursor = conn.cursor()
+cursor.execute("select symbol,SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) a,sum(amount) 交易量  ,count(*) 交易笔数, count(DISTINCT uid) 交易人数 from match_result_ltc_usdt where direction = 0 and consign_id is not null and   create_time > '2018-06-25 08:00:00' and uid not in ('4e3ef361-a918-4ab7-8e80-9192994efdd3','3d762c98-cc54-4d5c-b55d-a17119b768d4') group by symbol,SUBSTR(to_char(create_time,'YYYYMMDD'),1,8) order by A ASC")
+rows = cursor.fetchall()
+for i in range(a+2,len(rows)+a+2):
+         for j in range(len(rows[i-a-2])):
+              sheet2.write(i+1,j,rows[i-a-2][j])
+cursor.close()
+
+f.save('E:\\test\\'+'text.xls')#保存文件
