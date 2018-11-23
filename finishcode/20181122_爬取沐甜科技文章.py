@@ -68,9 +68,16 @@ while i<=len(mixinfo):
             j+=1
             time.sleep(3)   
         elif j>=6:
-            urlbug.append(i)
+            contentbug.append(i)
             i+=1
             j=1 
+
+amix=pd.DataFrame(data=mixinfo)
+aurlbug=pd.DataFrame(data=urlbug)
+acontentbug=pd.DataFrame(data=contentbug)
+amix.to_excel(r'E:\gj\研究\网址目录.xls')
+aurlbug.to_excel(r'E:\gj\研究\错误页数.xls')
+acontentbug.to_excel(r'E:\gj\研究\错误网址数.xls')
 
 #i=342
 #i=633、756/1540、2239、2384、2404/2465/2697的时候文章会出错
