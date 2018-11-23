@@ -153,3 +153,5 @@ for i in (ndf.columns):
 	e.contract=aa.name
 	e.price=b.values
 	lastdf=lastdf.append(e)
+
+#concat用法
