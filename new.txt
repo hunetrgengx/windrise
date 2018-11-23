@@ -1,9 +1,0 @@
-
-
-a=a+1
-date=getdate(i) 
-b=srdata(date)
-while not b.strip():
-   i=i+1
-   date=getdate(i)
-   b=srdata(date)   
