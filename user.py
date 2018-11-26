@@ -29,5 +29,7 @@ middata.index=middata[0]
 cursor.close()
 
 #result=pd.concat([userinfo,middata],axis=1,join='inner')
-result=pd.concat([userinfo,middata],axis=1,join_axes=[middata.index]) #行对齐，并采用middata的index进行匹配
-result.to_excel('0.xls')
+acontentbug=pd.DataFrame(data=contentbug)
+rexcel = open_workbook(r'E:\gj\研究\沐甜科技\错误网址.xls')
+result=pd.concat([acontentbug,rexcel])
+result.to_excel(r'E:\gj\研究\沐甜科技\错误网址.xls')
