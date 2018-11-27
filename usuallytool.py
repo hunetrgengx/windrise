@@ -1,3 +1,4 @@
+# -- coding: UTF-8 --
 import requests
 from bs4 import BeautifulSoup
 import time
@@ -6,12 +7,6 @@ import pandas as pd
 import re
 
 
-
-
-'''
-自建模块，用于自己使用
-创建者：耿洁
-'''
 
 #函数stol，用于将str格式转化为list格式，仅限于形如'[["a","b","c"],["a","b","c"]["a","b","c"]]'的转化为[['a','b','c'],['a','b','c']['a','b','c']],用于新浪接口的提取
 def stol(a):
