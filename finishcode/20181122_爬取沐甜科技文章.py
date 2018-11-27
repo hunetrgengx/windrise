@@ -21,14 +21,14 @@ def url_deal(aurl):
         mixinfo.append(deal)
 i=0
 j=1
-num=10012
+num=10 #每天读取的页数
 while i<num:
     try:
         for i in range(i,num+1):
             if i<6:
                 target='http://www.msweet.com.cn/mtkj/xwzx62/c010030c-'+str(i)+'.html'
             elif i>=6:
-                target ='http://www.msweet.com.cn/eportal/ui?pageId=1013961&currentPage='+str(i)+'&moduleId=e2569b5046d44d22abfa530608628071&staticRequest=yes'
+                target ='http://www.msweet.com.cn/eportal/ui?pageId=1013832&currentPage='+str(i)+'&moduleId=c010030c38b3450c8071a155bcccf224&staticRequest=yes'
             req = requests.get(url=target)#requests获取请求
             req.encoding = 'utf-8'        #定义encoding
             html = req.text               #取req的属性    
