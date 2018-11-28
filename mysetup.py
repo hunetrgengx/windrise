@@ -15,5 +15,7 @@ import random as re
 import matplotlib.pyplot as plt
 import mpl_finance as mpf
 from datetime import datetime
-import matplotlib.gridspec as gri  dspec
+import matplotlib.gridspec as gridspec
+import talib
+
 setup(console=['E:\\gj\\code\\vcode1.py'])

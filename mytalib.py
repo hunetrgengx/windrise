@@ -1,4 +1,5 @@
 # -- coding: UTF-8 --
+#talib用法
 import talib
 import numpy as np 
 import usuallytool as ut #导入自建函数usuallytool
