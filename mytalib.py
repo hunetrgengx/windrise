@@ -14,9 +14,9 @@ plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
 df=ut.dailykl('SR1409')
 close=df[4]
 nclose=np.array(close,dtype='f8') #非得做这一步转换，日了狗了
-ma5=talib.MA(nclose,5)
+ma5=talib.MA(nclose,10)
 '''
 from talib import MA_Type #终于懂了
 upper, middle, lower = talib.BBANDS(close, matype=MA_Type.T3)
-upper, middle, lower = talib.BBANDS(close, matype=talib.MA_Type.T3)
+upper, middle, lower = talib.BBANDS(nclose, matype=talib.MA_Type.T3)
 '''
