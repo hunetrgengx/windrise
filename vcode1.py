@@ -41,14 +41,10 @@ for i in range(25,len(close)):
             c=1
     elif len(position)>0:
         for j in range(len(position)):
-            if close[i]>position[j].price*1.02:
+            if (close[i]>position[j].price*1.02 or close[i]<position[j].price*0.99):
                 position[j].status=0
-                position[j].closing=position[j].price*1.02
-                position[j].profit=position[j].price*0.02*10
-            elif close[i]<position[j].price*0.98:
-                position[j].status=0
-                position[j].closing=position[j].price*0.98
-                position[j].profit=-position[j].price*0.02*10
+                position[j].closing=close[i]
+                position[j].profit=(close[i]-position[j].price)*10
 
 len(position)  
 over=[] 
@@ -67,10 +63,4 @@ for i in range(len(position)):
     elif position[i].profit<0:
         lose.append(position[i])
         loseprofit+=position[i].profit
-
-result=[]
-for i in range(len(position)):
-        result.append([position[i].price,position[i].closing])
-result=pd.DataFrame(data=result)
-result.to_excel('a.xls')
 #策略：交易者根据收盘进行决定是否开仓，如果收盘价高于10日均线，则进行建仓，这个仓位盈利百分之10、亏损百分之5平仓

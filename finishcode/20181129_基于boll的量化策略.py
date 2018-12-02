@@ -11,7 +11,7 @@ class fopen():
     def __init__(self):
             self.price=0
             self.direction=0
-            self.number=0
+            self.date=0
             self.status=0
             self.profit=0
             self.closing=0
