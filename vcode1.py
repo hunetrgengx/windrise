@@ -15,14 +15,23 @@ class fopen():
             self.status=0
             self.profit=0
             self.closing=0
+            self.date=0
+            self.closedate=0
 
 
 df=ut.dailykl('SR0')
 close=df[4]
 nclose=np.array(close,dtype='f8') #非得做这一步转换，日了狗了
 upper, middle, lower = talib.BBANDS(nclose, matype=talib.MA_Type.T3)
-close=nclose
+nlower=[]
+for i in range(len(lower)):
+        nlower.append(lower[i].item())
 
+close=[]
+for i in range(len(df[4])):
+        close.append(float(df[4][i]))
+
+lower=nlower
 position=[]
 over=[]
 mid=[]
@@ -35,19 +44,33 @@ for i in range(25,len(close)):
         a.direction=1
         a.number=i
         a.status=1
+        a.date=df[0][i]
         position.append(a)
     #判断卖出的问题
     if len(position)==0:
             c=1
     elif len(position)>0:
         for j in range(len(position)):
-            if (close[i]>position[j].price*1.02 or close[i]<position[j].price*0.99):
+            if  position[j].status==1:
+             if close[i]>position[j].price*1.02:
                 position[j].status=0
                 position[j].closing=close[i]
-                position[j].profit=(close[i]-position[j].price)*10
+                position[j].profit=position[j].price*0.02*10
+                position[j].closedate=df[0][i]
+             elif close[i]<position[j].price*0.99:
+                position[j].status=0
+                position[j].closing=close[i]
+                position[j].profit=(-position[j].price*0.02*10)
+                position[j].closedate=df[0][i]
 
 len(position)  
-over=[] 
+over=[]
+number=[]
+price=[]
+closeprice=[]
+closedate=[]
+date=[]
+
 win=[]
 lose=[]
 winprofit=0
@@ -55,6 +78,12 @@ loseprofit=0
 for i in range(len(position)):          
     if position[i].status==0:
         over.append(position[i])
+        number.append(position[i].number)
+        price.append(position[i].price)
+        closeprice.append(position[i].closing)
+        closedate.append(position[i].closedate)
+        date.append(position[i].date)
+
 
 for i in range(len(position)):
     if position[i].profit>0:
@@ -64,3 +93,5 @@ for i in range(len(position)):
         lose.append(position[i])
         loseprofit+=position[i].profit
 #策略：交易者根据收盘进行决定是否开仓，如果收盘价高于10日均线，则进行建仓，这个仓位盈利百分之10、亏损百分之5平仓
+
+
