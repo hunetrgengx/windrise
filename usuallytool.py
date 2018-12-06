@@ -5,6 +5,9 @@ import time
 import os
 import pandas as pd
 import re
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+import mpl_finance as mpf
 
 
 
@@ -54,3 +57,13 @@ def transcandledata(dfb):
             mix=[i,float(dfcc[1][i]),float(dfcc[2][i]),float(dfcc[3][i]),float(dfcc[4][i])]
             xdfc.append(mix)  
         return xdfc
+
+#定义函数，可以直接读取新浪财经的数据并绘制出K线图
+def showkl(ndf):
+    # 支持中文
+    plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+    plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+    ax=plt.figure()
+    mpf.candlestick_ohlc(ax, ndf, width=0.5, colorup='r', colordown='g')
+    ax.set_title('K线',fontsize=12,color='k')
+    plt.show()
