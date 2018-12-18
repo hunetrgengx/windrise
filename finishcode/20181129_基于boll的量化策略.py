@@ -6,6 +6,7 @@ import talib
 import numpy as np 
 import matplotlib as mpl
 #定义期货投资者Futures investors
+#You Can Be a Stock Market Genius
 
 class fopen():
     def __init__(self):
