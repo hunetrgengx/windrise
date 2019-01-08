@@ -1,14 +1,26 @@
-import requests,re
-from bs4 import BeautifulSoup
-i=5
-target ='http://www.msweet.com.cn/eportal/ui?pageId=1013961&currentPage='+str(i)+'&moduleId=e2569b5046d44d22abfa530608628071&staticRequest=yes'
-req = requests.get(url=target)#requests获取请求
-req.encoding = 'utf-8'        #定义encoding
-html = req.text               #取req的属性
-bf = BeautifulSoup(html,'lxml')
-texts = bf.find_all('div', class_ = 'list-recommend normal-recommend')
-#http://www.msweet.com.cn/eportal/ui?pageId=1013961&currentPage='+str(i)+'&moduleId=e2569b5046d44d22abfa530608628071&staticRequest=yes
-bd=BeautifulSoup(str(texts),'lxml') 
-nbd=str(bd).replace('<html><body><p>[</p><div class="list-recommend normal-recommend">\n','')
-name=re.sub(r'.*<h3> <span><a href="/mtkj','mtkj',nbd)
-print('测试')
+# -- coding: UTF-8 --
+#画图
+import talib
+import numpy as np 
+import usuallytool as ut #导入自建函数usuallytool
+import matplotlib.pyplot as plt
+import pandas as pd 
+import numpy as np
+# 支持中文
+plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+
+#导入数据
+name='SR1601'
+df=ut.dailykl(name)
+nclose=df[4]
+b=df[0]
+close=np.array(nclose,dtype='f8').tolist() #将数据转化成float格式
+#开始画图
+
+fig=plt.figure()
+
+plt.title(name)
+plt.plot(b,close)
+plt.show()
+

@@ -6,7 +6,7 @@ from xlrd import open_workbook
 from xlutils.copy import copy
 from urllib import request
 import pandas as pd
-#编译语句：pyinstaller -F -w yourfilename.py
+#编译语句：pyinstaller -F -w aa.py
 
 date=datetime.datetime.now().date() 
 lastweekdate=date-datetime.timedelta(hours = 24*7)
@@ -269,7 +269,7 @@ for i in range(len(rows)):
 cursor.close()
 
 print(date)
-f.save('E:\\gj\\everydayjob\\'+str(date)+'.xls')#保存文件
+f.save('F:\\everydayjob\\'+str(date)+'.xls')#保存文件
 
 
 
